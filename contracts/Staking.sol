@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./Interfaces/IStakingXSP.sol";
 import "./Interfaces/IRouter.sol";
 
-contract Staking is Ownable, ReentrancyGuard {
-    using SafeMath for uint256;
+contract Staking is Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+    using SafeMathUpgradeable for uint256;
     uint256 public apr = 4800;
     uint256 constant RATE_PRECISION = 10000;
     uint256 constant ONE_YEAR_IN_SECONDS = 365 days;
@@ -21,7 +22,7 @@ contract Staking is Ownable, ReentrancyGuard {
     uint256 public xspDistribute;
 
     uint256 constant PERIOD_PRECISION = 10000;
-    IERC20 public token;
+    IERC20Upgradeable public token;
     IStakingXSP public sXSP;
 
     bool public enabled;
@@ -34,7 +35,9 @@ contract Staking is Ownable, ReentrancyGuard {
     event Deposit(address indexed user, uint256 amount);
     event Redeem(address indexed user, uint256 amount);
 
-    constructor(IERC20 _token, address _sXSPToken) {
+    function initialize(IERC20Upgradeable _token, address _sXSPToken) public initializer {
+        __ReentrancyGuard_init();
+        __Ownable_init();
         token = _token;
         sXSP = IStakingXSP(_sXSPToken);
     }
@@ -115,19 +118,21 @@ contract Staking is Ownable, ReentrancyGuard {
         require(_stakeAmount > 0, "StakingXSP: stake amount must be greater than 0");
         token.transferFrom(msg.sender, address(this), _stakeAmount);
         StakeDetail storage stakeDetail = stakers[msg.sender];
+        uint256 interest = 0;
         if (stakeDetail.firstStakeAt == 0) {
             stakeDetail.principal = stakeDetail.principal.add(_stakeAmount);
             stakeDetail.firstStakeAt = stakeDetail.firstStakeAt == 0
                 ? block.timestamp
                 : stakeDetail.firstStakeAt;
         } else {
-            uint256 interest = getInterest(msg.sender);
+            interest = getInterest(msg.sender);
             stakeDetail.principal = stakeDetail.principal.add(_stakeAmount).add(interest);
         }
+        stakeDetail.pendingReward = 0;
         stakeDetail.lastProcessAt = block.timestamp;
         emit Deposit(msg.sender, _stakeAmount);
-        sXSP.mint(_msgSender(), _stakeAmount);
-        xspStake = xspStake.add(_stakeAmount);
+        sXSP.mint(_msgSender(), _stakeAmount.add(interest));
+        xspStake = xspStake.add(_stakeAmount.add(interest));
     }
 
     function redeem(uint256 _redeemAmount) external nonReentrant noContract {
