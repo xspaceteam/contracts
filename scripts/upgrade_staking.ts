@@ -1,15 +1,13 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
+  const stakingAddress = "";
   const Ctr = await ethers.getContractFactory("Staking");
-  const ctr = await upgrades.deployProxy(Ctr, [
-    "0xDe4359F19134B9BdC018b1bbAc305Bf61ED2bCaA", // XSP token
-    "0x1f89b5D987687DeCc92ec7f9b61fDabC9d4f6C47", // sXSP token
-  ]);
+  const ctr = await upgrades.upgradePRoxy(stakingAddress, Ctr);
 
   await ctr.deployed();
 
-  console.log(`contract deployed at ${ctr.address}`);
+  console.log(`contract was upgraded successfully!`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
