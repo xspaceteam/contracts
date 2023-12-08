@@ -1,9 +1,9 @@
-import { ethers, upgrades } from "hardhat";
+const { ethers, upgrades } = require("hardhat");
 
 async function main() {
-  const stakingAddress = "";
-  const Ctr = await ethers.getContractFactory("Staking");
-  const ctr = await upgrades.upgradePRoxy(stakingAddress, Ctr);
+  const stakingAddress = "0xEc8977f17aD01cAA99Bea62618EDeC5EE25aEC5d";
+  const Ctr = await ethers.getContractFactory("StakingV2");
+  const ctr = await upgrades.upgradeProxy(stakingAddress, Ctr);
 
   await ctr.deployed();
 

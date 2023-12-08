@@ -1,9 +1,9 @@
-const dotenv = require('dotenv')
-dotenv.config()
+const dotenv = require("dotenv");
+dotenv.config();
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
-require('@nomiclabs/hardhat-ethers');
-require('@openzeppelin/hardhat-upgrades');
+require("@nomiclabs/hardhat-ethers");
+require("@openzeppelin/hardhat-upgrades");
 
 const { PRIVATE_KEY } = process.env;
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -29,15 +29,14 @@ module.exports = {
       bscTestnet: "MGYY3TKJVMX6D1WMSB4X34BEC1BVQ6E7F4",
       goerli: "4YX8ZPTGDSEFH8CAD1U8YWPC3SYJUA4KT6",
       mainnet: "5EGJJA5AI9QVEM6CVJXXXKT84PJVUACK8V", //eth
-      bsc: "XGRD9Y45RBXBGPISVEK9JMYF97ZWYDRV4S" //bsc
-    }
+      bsc: "XGRD9Y45RBXBGPISVEK9JMYF97ZWYDRV4S", //bsc
+    },
   },
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8545"
+      url: "http://127.0.0.1:8545",
     },
-    hardhat: {
-    },
+    hardhat: {},
     goerli: {
       url: "https://goerli.infura.io/v3/43885af4abc848f0a04f9fdabd95ea43",
       chainId: 5,
@@ -75,7 +74,7 @@ module.exports = {
     matic: {
       url: "https://matic-mumbai.chainstacklabs.com/",
       accounts: [`0x${PRIVATE_KEY}`],
-    }
+    },
   },
   solidity: {
     compilers: [
@@ -84,9 +83,9 @@ module.exports = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1
-          }
-        }
+            runs: 1,
+          },
+        },
       },
       {
         version: "0.8.16",
@@ -107,11 +106,11 @@ module.exports = {
     ],
     settings: {
       optimizer: {
-        enabled: true
-      }
-    }
+        enabled: true,
+      },
+    },
   },
   mocha: {
-    timeout: 20000
-  }
+    timeout: 20000,
+  },
 };

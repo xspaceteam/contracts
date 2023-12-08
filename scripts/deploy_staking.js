@@ -1,4 +1,4 @@
-import { ethers, upgrades } from "hardhat";
+const { ethers, upgrades } = require("hardhat");
 
 async function main() {
   const Ctr = await ethers.getContractFactory("Staking");
