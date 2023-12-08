@@ -11,17 +11,17 @@ import "./Interfaces/IRouter.sol";
 
 contract Staking is Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using SafeMathUpgradeable for uint256;
-    uint256 public apr = 4800;
-    uint256 constant RATE_PRECISION = 10000;
-    uint256 constant ONE_YEAR_IN_SECONDS = 365 days;
-    uint256 constant ONE_DAY_IN_SECONDS = 1 days;
-    uint256 public cooldownTime = 7 days;
+    uint256 public apr;
+    uint256 public constant RATE_PRECISION = 10000;
+    uint256 public constant ONE_YEAR_IN_SECONDS = 365 days;
+    uint256 public constant ONE_DAY_IN_SECONDS = 1 days;
+    uint256 public cooldownTime;
     address public USDT;
     IRouter public router;
     uint256 public xspStake;
     uint256 public xspDistribute;
 
-    uint256 constant PERIOD_PRECISION = 10000;
+    uint256 public constant PERIOD_PRECISION = 10000;
     IERC20Upgradeable public token;
     IStakingXSP public sXSP;
 
@@ -40,6 +40,8 @@ contract Staking is Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeabl
         __Ownable_init();
         token = _token;
         sXSP = IStakingXSP(_sXSPToken);
+        apr = 4800;
+        cooldownTime = 7 days;
     }
 
     struct StakeDetail {
